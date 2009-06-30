@@ -150,7 +150,6 @@ class ballot_race {
     //$this->printArray($this->candidates);
     return array_keys($this->candidates);
   }
-  
 
   private function printArray($a) {
     echo '<p>race</p>';
@@ -204,22 +203,22 @@ class ballot_candidate {
 }
 
 class view_factory {
-  public static function factory($view_type, $ballot) {
+  public static function factory($view_type, $ballot_model) {
     switch ($view_type) {
       case 'ballot':
-        $ballot = new majority_vote_ballot($election_nid, $election_name);
+        $ballot_view = new majority_view($ballot_model);
         break;
       
       case 'confirm':
-        $ballot = new instant_runoff_vote_ballot($election_nid, $election_name);
+        $ballot_view = new instant_runoff_view($ballot_model);
         break;
         
       default:
         die('Unknown View Type ' . $view_type );
     }
   
-    if ($ballot instanceof Ballot) {
-      return $ballot;
+    if ($ballot_view instanceof View) {
+      return $ballot_view;
     }
     else {
       die('Unknown Error creating Ballot');
@@ -229,10 +228,32 @@ class view_factory {
 }
 
 abstract class View {
-  
-  
-  
+  private $ballot_model;
+
+  public function __construct($ballot_model) {
+    $this->ballot_model = $ballot_model;
+  }
+
+  public function print_ballot() {
+   echo '<h3>'.$this->ballot_model->get_title().'</h3>'; 
 }
+
+}
+
+class majority_view extends View {
+
+  public function __construct($ballot_model) {
+    parent::__construct($ballot_model);
+  }
+}
+
+class instant_runoff_view extends View{
+
+  public function __construct($ballot_model) {
+    parent::__construct($ballot_model);
+  }
+}
+
 
 
 
